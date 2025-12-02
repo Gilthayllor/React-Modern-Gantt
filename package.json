@@ -1,5 +1,5 @@
 {
-  "name": "react-modern-gantt",
+  "name": "@gilthayllor/react-modern-gantt",
   "version": "1.0.0",
   "description": "A modern, customizable Gantt chart component for React applications",
   "main": "dist/index.js",
