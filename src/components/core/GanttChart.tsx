@@ -4,7 +4,15 @@ import { getMonthsBetween, findEarliestDate, findLatestDate } from '@/utils';
 import { Timeline, TodayMarker } from '@/components/timeline';
 import { ViewModeSelector } from '@/components/ui';
 import { TaskRow, TaskList } from '@/components/task';
-import { addDays, addHours, addMinutes, addQuarters, startOfQuarter, addYears, startOfYear } from 'date-fns';
+import {
+  addDays,
+  addHours,
+  addMinutes,
+  addQuarters,
+  startOfQuarter,
+  addYears,
+  startOfYear,
+} from 'date-fns';
 import { CollisionService } from '@/services/CollisionService';
 
 /**
@@ -53,6 +61,9 @@ const GanttChart: React.FC<GanttChartProps> = ({
   onTaskClick,
   onTaskSelect,
   onTaskDoubleClick,
+  onTaskRightClick,
+  onGroupMouseEnter,
+  onGroupMouseLeave,
   onGroupClick,
   onViewModeChange,
 
@@ -84,9 +95,17 @@ const GanttChart: React.FC<GanttChartProps> = ({
     let newEndDate = derivedEndDate;
 
     if (direction === 'left') {
-      newStartDate = subtractTimeUnits(derivedStartDate, extensionAmount, activeViewMode);
+      newStartDate = subtractTimeUnits(
+        derivedStartDate,
+        extensionAmount,
+        activeViewMode,
+      );
     } else {
-      newEndDate = addTimeUnits(derivedEndDate, extensionAmount, activeViewMode);
+      newEndDate = addTimeUnits(
+        derivedEndDate,
+        extensionAmount,
+        activeViewMode,
+      );
     }
 
     onTimelineExtend(direction, newStartDate, newEndDate);
@@ -126,7 +145,11 @@ const GanttChart: React.FC<GanttChartProps> = ({
       case ViewMode.WEEK:
         return addDays(date, amount * 7);
       case ViewMode.MONTH:
-        return new Date(date.getFullYear(), date.getMonth() + amount, date.getDate());
+        return new Date(
+          date.getFullYear(),
+          date.getMonth() + amount,
+          date.getDate(),
+        );
       case ViewMode.QUARTER:
         return addQuarters(date, amount);
       case ViewMode.YEAR:
@@ -137,7 +160,11 @@ const GanttChart: React.FC<GanttChartProps> = ({
   };
 
   // Helper to subtract time units
-  const subtractTimeUnits = (date: Date, amount: number, mode: ViewMode): Date => {
+  const subtractTimeUnits = (
+    date: Date,
+    amount: number,
+    mode: ViewMode,
+  ): Date => {
     switch (mode) {
       case ViewMode.MINUTE:
         return addMinutes(date, -amount);
@@ -148,7 +175,11 @@ const GanttChart: React.FC<GanttChartProps> = ({
       case ViewMode.WEEK:
         return addDays(date, -amount * 7);
       case ViewMode.MONTH:
-        return new Date(date.getFullYear(), date.getMonth() - amount, date.getDate());
+        return new Date(
+          date.getFullYear(),
+          date.getMonth() - amount,
+          date.getDate(),
+        );
       case ViewMode.QUARTER:
         return addQuarters(date, -amount);
       case ViewMode.YEAR:
@@ -181,7 +212,11 @@ const GanttChart: React.FC<GanttChartProps> = ({
   };
 
   // Get minutes between dates with configurable step - OPTIMIZED for performance
-  const getMinutesBetween = (start: Date, end: Date, step: number = 5): Date[] => {
+  const getMinutesBetween = (
+    start: Date,
+    end: Date,
+    step: number = 5,
+  ): Date[] => {
     const minutes: Date[] = [];
     let currentDate = new Date(start);
     currentDate.setSeconds(0, 0);
@@ -208,7 +243,7 @@ const GanttChart: React.FC<GanttChartProps> = ({
     if (intervalCount >= maxIntervals) {
       console.warn(
         `Minute view limited to ${maxIntervals} intervals for performance. ` +
-          `Consider using a larger time range or switching to Hour view.`
+          `Consider using a larger time range or switching to Hour view.`,
       );
     }
 
@@ -297,10 +332,11 @@ const GanttChart: React.FC<GanttChartProps> = ({
         return timeUnits.findIndex(
           date =>
             date.getHours() === today.getHours() &&
-            Math.floor(date.getMinutes() / (minuteStep || 5)) === Math.floor(today.getMinutes() / (minuteStep || 5)) &&
+            Math.floor(date.getMinutes() / (minuteStep || 5)) ===
+              Math.floor(today.getMinutes() / (minuteStep || 5)) &&
             date.getDate() === today.getDate() &&
             date.getMonth() === today.getMonth() &&
-            date.getFullYear() === today.getFullYear()
+            date.getFullYear() === today.getFullYear(),
         );
       case ViewMode.HOUR:
         return timeUnits.findIndex(
@@ -308,14 +344,14 @@ const GanttChart: React.FC<GanttChartProps> = ({
             date.getHours() === today.getHours() &&
             date.getDate() === today.getDate() &&
             date.getMonth() === today.getMonth() &&
-            date.getFullYear() === today.getFullYear()
+            date.getFullYear() === today.getFullYear(),
         );
       case ViewMode.DAY:
         return timeUnits.findIndex(
           date =>
             date.getDate() === today.getDate() &&
             date.getMonth() === today.getMonth() &&
-            date.getFullYear() === today.getFullYear()
+            date.getFullYear() === today.getFullYear(),
         );
       case ViewMode.WEEK:
         return timeUnits.findIndex(date => {
@@ -325,15 +361,21 @@ const GanttChart: React.FC<GanttChartProps> = ({
         });
       case ViewMode.MONTH:
         return timeUnits.findIndex(
-          date => date.getMonth() === today.getMonth() && date.getFullYear() === today.getFullYear()
+          date =>
+            date.getMonth() === today.getMonth() &&
+            date.getFullYear() === today.getFullYear(),
         );
       case ViewMode.QUARTER:
         const todayQuarter = Math.floor(today.getMonth() / 3);
         return timeUnits.findIndex(
-          date => Math.floor(date.getMonth() / 3) === todayQuarter && date.getFullYear() === today.getFullYear()
+          date =>
+            Math.floor(date.getMonth() / 3) === todayQuarter &&
+            date.getFullYear() === today.getFullYear(),
         );
       case ViewMode.YEAR:
-        return timeUnits.findIndex(date => date.getFullYear() === today.getFullYear());
+        return timeUnits.findIndex(
+          date => date.getFullYear() === today.getFullYear(),
+        );
       default:
         return -1;
     }
@@ -352,7 +394,13 @@ const GanttChart: React.FC<GanttChartProps> = ({
     }
 
     // Default standard view modes
-    return [ViewMode.DAY, ViewMode.WEEK, ViewMode.MONTH, ViewMode.QUARTER, ViewMode.YEAR];
+    return [
+      ViewMode.DAY,
+      ViewMode.WEEK,
+      ViewMode.MONTH,
+      ViewMode.QUARTER,
+      ViewMode.YEAR,
+    ];
   };
 
   // Get time units and calculate current unit index
@@ -378,8 +426,14 @@ const GanttChart: React.FC<GanttChartProps> = ({
       try {
         const ensuredTask = {
           ...updatedTask,
-          startDate: updatedTask.startDate instanceof Date ? updatedTask.startDate : new Date(updatedTask.startDate),
-          endDate: updatedTask.endDate instanceof Date ? updatedTask.endDate : new Date(updatedTask.endDate),
+          startDate:
+            updatedTask.startDate instanceof Date
+              ? updatedTask.startDate
+              : new Date(updatedTask.startDate),
+          endDate:
+            updatedTask.endDate instanceof Date
+              ? updatedTask.endDate
+              : new Date(updatedTask.endDate),
         };
 
         // Force a re-render to update collision detection
@@ -392,12 +446,30 @@ const GanttChart: React.FC<GanttChartProps> = ({
     }
   };
 
-  const handleTaskClick = (task: Task, group: TaskGroup) => {
+  const handleTaskClick = (
+    e: React.MouseEvent,
+    task: Task,
+    group: TaskGroup,
+  ) => {
     if (onTaskClick) {
       try {
-        onTaskClick(task, group);
+        onTaskClick(e, task, group);
       } catch (error) {
         console.error('Error in handleTaskClick:', error);
+      }
+    }
+  };
+
+  const handleTaskRightClick = (
+    e: React.MouseEvent,
+    task: Task,
+    group: TaskGroup,
+  ) => {
+    if (onTaskRightClick) {
+      try {
+        onTaskRightClick(e, task, group);
+      } catch (error) {
+        console.error('Error in handleTaskRightClick:', error);
       }
     }
   };
@@ -464,7 +536,10 @@ const GanttChart: React.FC<GanttChartProps> = ({
   useEffect(() => {
     if (containerRef.current) {
       const speedValue = Math.max(0.1, Math.min(1, animationSpeed || 0.25));
-      containerRef.current.style.setProperty('--rmg-animation-speed', speedValue.toString());
+      containerRef.current.style.setProperty(
+        '--rmg-animation-speed',
+        speedValue.toString(),
+      );
     }
   }, [animationSpeed, containerRef.current]);
 
@@ -496,12 +571,14 @@ const GanttChart: React.FC<GanttChartProps> = ({
     }
 
     return (
-      <div className="rmg-header">
-        <div className="rmg-header-content">
-          <h1 className={getComponentClassName('title', 'rmg-title')}>{title}</h1>
+      <div className='rmg-header'>
+        <div className='rmg-header-content'>
+          <h1 className={getComponentClassName('title', 'rmg-title')}>
+            {title}
+          </h1>
 
           {shouldShowViewModeSelector && (
-            <div className="rmg-view-mode-wrapper">
+            <div className='rmg-view-mode-wrapper'>
               {renderViewModeSelector ? (
                 renderViewModeSelector({
                   activeMode: activeViewMode,
@@ -558,12 +635,13 @@ const GanttChart: React.FC<GanttChartProps> = ({
           '--gantt-unit-width': `${viewUnitWidth}px`,
         } as React.CSSProperties
       }
-      data-testid="gantt-chart"
-      data-rmg-component="gantt-chart"
-      data-view-mode={activeViewMode}>
+      data-testid='gantt-chart'
+      data-rmg-component='gantt-chart'
+      data-view-mode={activeViewMode}
+    >
       {renderHeaderContent()}
 
-      <div className="rmg-container" data-rmg-component="container">
+      <div className='rmg-container' data-rmg-component='container'>
         {renderTaskList ? (
           renderTaskList({
             tasks,
@@ -584,23 +662,38 @@ const GanttChart: React.FC<GanttChartProps> = ({
         <div
           ref={scrollContainerRef}
           className={`rmg-timeline-container ${isAutoScrolling ? 'rmg-auto-scrolling' : ''}`}
-          data-rmg-component="timeline-container">
-          <div className="rmg-timeline-content" data-rmg-component="timeline-content">
+          data-rmg-component='timeline-container'
+        >
+          <div
+            className='rmg-timeline-content'
+            data-rmg-component='timeline-content'
+          >
             {renderTimelineHeaderContent()}
 
-            <div className="rmg-timeline-grid" data-rmg-component="timeline-grid" data-view-mode={activeViewMode}>
+            <div
+              className='rmg-timeline-grid'
+              data-rmg-component='timeline-grid'
+              data-view-mode={activeViewMode}
+            >
               {showCurrentDateMarker && currentUnitIndex >= 0 && (
                 <TodayMarker
                   currentMonthIndex={currentUnitIndex}
                   // Calculate height based on actual row heights including collisions
                   height={tasks.reduce((total, group) => {
-                    if (!group || !Array.isArray(group.tasks)) return total + 60;
-                    const taskRows = CollisionService.detectOverlaps(group.tasks, activeViewMode);
+                    if (!group || !Array.isArray(group.tasks))
+                      return total + 60;
+                    const taskRows = CollisionService.detectOverlaps(
+                      group.tasks,
+                      activeViewMode,
+                    );
                     return total + Math.max(60, taskRows.length * 40 + 20);
                   }, 0)}
                   label={todayLabel}
                   dayOfMonth={currentDate.getDate()}
-                  className={getComponentClassName('todayMarker', 'rmg-today-marker')}
+                  className={getComponentClassName(
+                    'todayMarker',
+                    'rmg-today-marker',
+                  )}
                   viewMode={activeViewMode}
                   unitWidth={viewUnitWidth}
                 />
@@ -625,9 +718,13 @@ const GanttChart: React.FC<GanttChartProps> = ({
                     onTaskUpdate={handleTaskUpdate}
                     onTaskClick={handleTaskClick}
                     onTaskSelect={handleTaskSelect}
+                    onTaskRightClick={handleTaskRightClick}
                     onAutoScrollChange={handleAutoScrollingChange}
                     className={getComponentClassName('taskRow', 'rmg-task-row')}
-                    tooltipClassName={getComponentClassName('tooltip', 'rmg-tooltip')}
+                    tooltipClassName={getComponentClassName(
+                      'tooltip',
+                      'rmg-tooltip',
+                    )}
                     viewMode={activeViewMode}
                     scrollContainerRef={scrollContainerRef}
                     smoothDragging={smoothDragging}

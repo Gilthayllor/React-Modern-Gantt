@@ -23,10 +23,12 @@ const TaskItem: React.FC<TaskItemProps> = ({
   onMouseEnter,
   onMouseLeave,
   onClick,
+  onRightClick,
   onProgressUpdate,
 }) => {
   // Show resize handles only when hovered or dragging, in edit mode, AND resizing is allowed
-  const showResizeHandles = (isHovered || isDragging) && editMode && allowTaskResize;
+  const showResizeHandles =
+    (isHovered || isDragging) && editMode && allowTaskResize;
 
   // Progress editing requires: editMode=true, showProgress=true, AND allowProgressEdit=true
   const canEditProgress = editMode && showProgress && allowProgressEdit;
@@ -109,7 +111,10 @@ const TaskItem: React.FC<TaskItemProps> = ({
 
       // Calculate new progress percentage based on mouse position
       const barWidth = taskRect.width - 2; // Account for 1px padding on each side
-      const clickX = Math.max(0, Math.min(barWidth, ev.clientX - taskRect.left));
+      const clickX = Math.max(
+        0,
+        Math.min(barWidth, ev.clientX - taskRect.left),
+      );
       const newPercent = Math.round((clickX / barWidth) * 100);
 
       // Update progress value with constraints
@@ -165,7 +170,7 @@ const TaskItem: React.FC<TaskItemProps> = ({
     return (
       <div
         ref={taskRef}
-        className="rmg-task-item-custom"
+        className='rmg-task-item-custom'
         style={{
           position: 'absolute',
           left: `${Math.max(0, leftPx)}px`,
@@ -173,6 +178,12 @@ const TaskItem: React.FC<TaskItemProps> = ({
           top: `${topPx}px`,
         }}
         onClick={e => onClick(e, task)}
+        onContextMenu={e => {
+          if (onRightClick) {
+            e.preventDefault();
+            onRightClick(e, task);
+          }
+        }}
         onMouseDown={canMoveTask ? handleTaskMouseDown : undefined}
         onMouseEnter={e => onMouseEnter(e, task)}
         onMouseLeave={onMouseLeave}
@@ -180,7 +191,8 @@ const TaskItem: React.FC<TaskItemProps> = ({
         data-task-id={task.id}
         data-instance-id={instanceId}
         data-dragging={isDragging ? 'true' : 'false'}
-        data-rmg-component="task">
+        data-rmg-component='task'
+      >
         {customTaskContent}
       </div>
     );
@@ -207,6 +219,12 @@ const TaskItem: React.FC<TaskItemProps> = ({
       className={`rmg-task-item ${isDragging ? 'rmg-task-item-dragging' : ''}`}
       style={taskStyles}
       onClick={e => onClick(e, task)}
+      onContextMenu={e => {
+        if (onRightClick) {
+          e.preventDefault();
+          onRightClick(e, task);
+        }
+      }}
       onMouseDown={canMoveTask ? handleTaskMouseDown : undefined}
       onMouseEnter={e => onMouseEnter(e, task)}
       onMouseLeave={onMouseLeave}
@@ -214,26 +232,27 @@ const TaskItem: React.FC<TaskItemProps> = ({
       data-task-id={task.id}
       data-instance-id={instanceId}
       data-dragging={isDragging ? 'true' : 'false'}
-      data-rmg-component="task">
+      data-rmg-component='task'
+    >
       {/* Left resize handle */}
       {showResizeHandles && (
         <div
-          className="rmg-resize-handle rmg-resize-handle-left"
+          className='rmg-resize-handle rmg-resize-handle-left'
           onMouseDown={handleResizeLeft}
-          data-rmg-component="resize-handle"
-          data-rmg-handle="left"
+          data-rmg-component='resize-handle'
+          data-rmg-handle='left'
           style={{ cursor: 'ew-resize' }}
         />
       )}
 
       {/* Task name */}
-      <div className="rmg-task-item-name">{task.name || 'Unnamed Task'}</div>
+      <div className='rmg-task-item-name'>{task.name || 'Unnamed Task'}</div>
 
       {/* Progress bar with interactive bubble */}
       {showProgress && typeof progressPercent === 'number' && (
         <div
           ref={progressBarRef}
-          className="rmg-progress-bar"
+          className='rmg-progress-bar'
           onClick={e => {
             if (canEditProgress && onProgressUpdate) {
               e.stopPropagation();
@@ -244,14 +263,16 @@ const TaskItem: React.FC<TaskItemProps> = ({
               onProgressUpdate(task, newPercent);
             }
           }}
-          data-rmg-component="progress-bar">
+          data-rmg-component='progress-bar'
+        >
           <div
-            className="rmg-progress-fill"
+            className='rmg-progress-fill'
             style={{
               width: `${progressPercent}%`,
               transition: isDraggingProgress ? 'none' : 'width 0.3s ease-out',
             }}
-            data-rmg-component="progress-fill">
+            data-rmg-component='progress-fill'
+          >
             {/* Progress bubble handle - IMPROVED: Better visibility and positioning */}
             {canEditProgress && (isHovered || isDraggingProgress) && (
               <>
@@ -263,12 +284,15 @@ const TaskItem: React.FC<TaskItemProps> = ({
                     pointerEvents: 'auto',
                     zIndex: 1000,
                   }}
-                  title="Drag to adjust progress"
-                  data-rmg-component="progress-handle"
+                  title='Drag to adjust progress'
+                  data-rmg-component='progress-handle'
                 />
                 {/* Progress percentage tooltip */}
                 {(showProgressTooltip || isDraggingProgress) && (
-                  <div className="rmg-progress-tooltip" data-rmg-component="progress-tooltip">
+                  <div
+                    className='rmg-progress-tooltip'
+                    data-rmg-component='progress-tooltip'
+                  >
                     {progressPercent}%
                   </div>
                 )}
@@ -281,10 +305,10 @@ const TaskItem: React.FC<TaskItemProps> = ({
       {/* Right resize handle */}
       {showResizeHandles && (
         <div
-          className="rmg-resize-handle rmg-resize-handle-right"
+          className='rmg-resize-handle rmg-resize-handle-right'
           onMouseDown={handleResizeRight}
-          data-rmg-component="resize-handle"
-          data-rmg-handle="right"
+          data-rmg-component='resize-handle'
+          data-rmg-handle='right'
           style={{ cursor: 'ew-resize' }}
         />
       )}

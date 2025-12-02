@@ -14,6 +14,8 @@ const TaskList: React.FC<TaskListProps> = ({
   rowHeight = 40,
   className = '',
   onGroupClick,
+  onGroupMouseEnter,
+  onGroupMouseLeave,
   viewMode,
 }) => {
   // Validate task groups array
@@ -36,10 +38,27 @@ const TaskList: React.FC<TaskListProps> = ({
     }
   };
 
+  // Handle group mouse enter
+  const handleGroupMouseEnter = (event: React.MouseEvent, group: TaskGroup) => {
+    if (onGroupMouseEnter) {
+      onGroupMouseEnter(event, group);
+    }
+  };
+
+  // Handle group mouse leave
+  const handleGroupMouseLeave = () => {
+    if (onGroupMouseLeave) {
+      onGroupMouseLeave();
+    }
+  };
+
   return (
-    <div className={`rmg-task-list ${className}`} data-rmg-component="task-list">
+    <div
+      className={`rmg-task-list ${className}`}
+      data-rmg-component='task-list'
+    >
       {/* Header - CSS handles the height adjustment based on view mode */}
-      <div className="rmg-task-list-header">{headerLabel}</div>
+      <div className='rmg-task-list-header'>{headerLabel}</div>
 
       {/* Task Groups */}
       {validTasks.map(taskGroup => {
@@ -50,39 +69,52 @@ const TaskList: React.FC<TaskListProps> = ({
         return (
           <div
             key={`task-group-${taskGroup.id || 'unknown'}`}
-            className="rmg-task-group"
+            className='rmg-task-group'
             style={{ height: `${groupHeight}px` }}
             onClick={() => handleGroupClick(taskGroup)}
+            onMouseEnter={e => handleGroupMouseEnter(e, taskGroup)}
+            onMouseLeave={handleGroupMouseLeave}
             data-testid={`task-group-${taskGroup.id || 'unknown'}`}
-            data-rmg-component="task-group"
-            data-group-id={taskGroup.id}>
-            <div className="rmg-task-group-content">
+            data-rmg-component='task-group'
+            data-group-id={taskGroup.id}
+          >
+            <div className='rmg-task-group-content'>
               {/* Icon (if enabled) */}
               {showIcon && taskGroup.icon && (
                 <span
-                  className="rmg-task-group-icon"
+                  className='rmg-task-group-icon'
                   dangerouslySetInnerHTML={{ __html: taskGroup.icon }}
-                  data-rmg-component="task-group-icon"
+                  data-rmg-component='task-group-icon'
                 />
               )}
 
               {/* Group name */}
-              <div className="rmg-task-group-name" data-rmg-component="task-group-name">
+              <div
+                className='rmg-task-group-name'
+                data-rmg-component='task-group-name'
+              >
                 {taskGroup.name || 'Unnamed'}
               </div>
             </div>
 
             {/* Description (if available and enabled) */}
             {showDescription && taskGroup.description && (
-              <div className="rmg-task-group-description" data-rmg-component="task-group-description">
+              <div
+                className='rmg-task-group-description'
+                data-rmg-component='task-group-description'
+              >
                 {taskGroup.description}
               </div>
             )}
 
             {/* Task count (if enabled) */}
             {showTaskCount && taskGroup.tasks && taskGroup.tasks.length > 0 && (
-              <div className="rmg-task-group-count" data-rmg-component="task-group-count">
-                {taskGroup.tasks.length} {taskGroup.tasks.length === 1 ? 'task' : 'tasks'}
+              <div
+                className='rmg-task-group-count'
+                data-rmg-component='task-group-count'
+              >
+                {taskGroup.tasks.length}{' '}
+                {taskGroup.tasks.length === 1 ? 'task' : 'tasks'}
               </div>
             )}
           </div>

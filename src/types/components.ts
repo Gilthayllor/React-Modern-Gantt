@@ -88,13 +88,19 @@ export interface GanttChartProps {
 
   // NEW: Infinite scroll feature
   infiniteScroll?: boolean; // Enable automatic timeline extension
-  onTimelineExtend?: (direction: 'left' | 'right', newStartDate: Date, newEndDate: Date) => void;
+  onTimelineExtend?: (
+    direction: 'left' | 'right',
+    newStartDate: Date,
+    newEndDate: Date,
+  ) => void;
 
   // Custom rendering functions
   renderTaskList?: (props: TaskListRenderProps) => React.ReactNode;
   renderTask?: (props: TaskRenderProps) => React.ReactNode;
   renderTooltip?: (props: TooltipRenderProps) => React.ReactNode;
-  renderViewModeSelector?: (props: ViewModeSelectorRenderProps) => React.ReactNode;
+  renderViewModeSelector?: (
+    props: ViewModeSelectorRenderProps,
+  ) => React.ReactNode;
   renderHeader?: (props: HeaderRenderProps) => React.ReactNode;
   renderTimelineHeader?: (props: TimelineHeaderRenderProps) => React.ReactNode;
   getTaskColor?: (props: TaskColorProps) => {
@@ -105,10 +111,17 @@ export interface GanttChartProps {
 
   // Event handlers
   onTaskUpdate?: (groupId: string, updatedTask: Task) => void;
-  onTaskClick?: (task: Task, group: TaskGroup) => void;
+  onTaskClick?: (e: React.MouseEvent, task: Task, group: TaskGroup) => void;
+  onTaskRightClick?: (
+    e: React.MouseEvent,
+    task: Task,
+    group: TaskGroup,
+  ) => void;
   onTaskSelect?: (task: Task, isSelected: boolean) => void;
   onTaskDoubleClick?: (task: Task) => void;
   onGroupClick?: (group: TaskGroup) => void;
+  onGroupMouseEnter?: (event: React.MouseEvent, group: TaskGroup) => void;
+  onGroupMouseLeave?: () => void;
   onViewModeChange?: (viewMode: ViewMode) => void;
 
   // Visual customization
@@ -134,7 +147,12 @@ export interface TaskRowProps {
   movementThreshold?: number;
   animationSpeed?: number;
   onTaskUpdate?: (groupId: string, updatedTask: Task) => void;
-  onTaskClick?: (task: Task, group: TaskGroup) => void;
+  onTaskClick?: (e: React.MouseEvent, task: Task, group: TaskGroup) => void;
+  onTaskRightClick?: (
+    e: React.MouseEvent,
+    task: Task,
+    group: TaskGroup,
+  ) => void;
   onTaskSelect?: (task: Task, isSelected: boolean) => void;
   onAutoScrollChange?: (isScrolling: boolean) => void;
   viewMode?: ViewMode;
@@ -163,6 +181,8 @@ export interface TaskListProps {
   rowHeight?: number;
   className?: string;
   onGroupClick?: (group: TaskGroup) => void;
+  onGroupMouseEnter?: (event: React.MouseEvent, group: TaskGroup) => void;
+  onGroupMouseLeave?: () => void;
   viewMode?: ViewMode;
 }
 
@@ -195,10 +215,15 @@ export interface TaskItemProps {
     textColor?: string;
   };
   renderTask?: (props: TaskRenderProps) => React.ReactNode;
-  onMouseDown: (event: React.MouseEvent, task: Task, type: 'move' | 'resize-left' | 'resize-right') => void;
+  onMouseDown: (
+    event: React.MouseEvent,
+    task: Task,
+    type: 'move' | 'resize-left' | 'resize-right',
+  ) => void;
   onMouseEnter: (event: React.MouseEvent, task: Task) => void;
   onMouseLeave: () => void;
   onClick: (event: React.MouseEvent, task: Task) => void;
+  onRightClick?: (event: React.MouseEvent, task: Task) => void;
   onProgressUpdate?: (task: Task, newPercent: number) => void;
 }
 
