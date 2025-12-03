@@ -8,15 +8,21 @@ const TooltipGroup: React.FC<
   TooltipGroupProps & {
     renderTooltip?: (props: TooltipGroupRenderProps) => React.ReactNode;
   }
-> = ({ position, className = '', renderTooltip, group, rowHeight = 60 }) => {
+> = ({ position, className = '', renderTooltip, group }) => {
+  const style: React.CSSProperties = {
+    position: 'fixed',
+    left: position.x,
+    top: position.y,
+    zIndex: 1000,
+  };
+
+  console.log('Rendering TooltipGroup for group:', group);
+
   if (renderTooltip) {
     return (
       <div
         className={`rmg-tooltip ${className} rmg-tooltip-visible`}
-        style={{
-          left: `${position.x}px`,
-          top: `${position.y - rowHeight}px`,
-        }}
+        style={style}
         data-rmg-component='tooltip'
       >
         {renderTooltip({
@@ -31,10 +37,7 @@ const TooltipGroup: React.FC<
   return (
     <div
       className={`rmg-tooltip ${className} rmg-tooltip-visible`}
-      style={{
-        left: `${position.x}px`,
-        top: `${position.y - rowHeight}px`,
-      }}
+      style={style}
       data-rmg-component='tooltip'
     >
       {/* Group name */}

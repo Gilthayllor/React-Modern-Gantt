@@ -131,7 +131,6 @@ const TaskList: React.FC<TaskListProps> = ({
           group={hoveredGroup}
           position={{ x: tooltipPosition.x, y: tooltipPosition.y }}
           renderTooltip={renderTooltipGroup}
-          rowHeight={getGroupHeight(hoveredGroup)}
         />
       )}
     </div>

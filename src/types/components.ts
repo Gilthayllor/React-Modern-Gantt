@@ -253,7 +253,6 @@ export interface TooltipProps {
 export interface TooltipGroupProps {
   group: TaskGroup;
   position: { x: number; y: number };
-  rowHeight?: number;
   className?: string;
   renderTooltip?: (props: TooltipGroupRenderProps) => React.ReactNode;
 }
