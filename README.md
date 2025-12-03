@@ -59,13 +59,13 @@ A flexible, customizable Gantt chart component for React applications with drag-
 ### NPM
 
 ```bash
-npm install react-modern-gantt
+npm install @gilthayllor/react-modern-gantt
 ```
 
 ### Yarn
 
 ```bash
-yarn add react-modern-gantt
+yarn add @gilthayllor/react-modern-gantt
 ```
 
 ## 🚀 Quick Start
