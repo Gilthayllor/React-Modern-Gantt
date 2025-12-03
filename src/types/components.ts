@@ -29,6 +29,11 @@ export interface TooltipRenderProps {
   viewMode: ViewMode;
 }
 
+export interface TooltipGroupRenderProps {
+  group: TaskGroup;
+  position: { x: number; y: number };
+}
+
 export interface ViewModeSelectorRenderProps {
   activeMode: ViewMode;
   onChange: (mode: ViewMode) => void;
@@ -120,8 +125,6 @@ export interface GanttChartProps {
   onTaskSelect?: (task: Task, isSelected: boolean) => void;
   onTaskDoubleClick?: (task: Task) => void;
   onGroupClick?: (group: TaskGroup) => void;
-  onGroupMouseEnter?: (event: React.MouseEvent, group: TaskGroup) => void;
-  onGroupMouseLeave?: () => void;
   onViewModeChange?: (viewMode: ViewMode) => void;
 
   // Visual customization
@@ -129,6 +132,10 @@ export interface GanttChartProps {
   rowHeight?: number;
   timeStep?: number;
   unitWidth?: number;
+
+  // New: Tooltip for task groups in TaskList
+  showTooltipGroup?: boolean;
+  renderTooltipGroup?: (props: TooltipGroupRenderProps) => React.ReactNode;
 }
 export interface TaskRowProps {
   taskGroup: TaskGroup;
@@ -181,9 +188,9 @@ export interface TaskListProps {
   rowHeight?: number;
   className?: string;
   onGroupClick?: (group: TaskGroup) => void;
-  onGroupMouseEnter?: (event: React.MouseEvent, group: TaskGroup) => void;
-  onGroupMouseLeave?: () => void;
   viewMode?: ViewMode;
+  showTooltipGroup?: boolean;
+  renderTooltipGroup?: (props: TooltipGroupRenderProps) => React.ReactNode;
 }
 
 export interface TimelineProps {
@@ -241,6 +248,14 @@ export interface TooltipProps {
   className?: string;
   viewMode?: ViewMode;
   renderTooltip?: (props: TooltipRenderProps) => React.ReactNode;
+}
+
+export interface TooltipGroupProps {
+  group: TaskGroup;
+  position: { x: number; y: number };
+  rowHeight?: number;
+  className?: string;
+  renderTooltip?: (props: TooltipGroupRenderProps) => React.ReactNode;
 }
 
 export interface TodayMarkerProps {

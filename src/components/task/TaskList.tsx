@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useRef, useState } from 'react';
 import { TaskGroup, ViewMode, TaskListProps } from '@/types';
 import { CollisionService } from '@/services';
+import TooltipGroup from '../ui/TooltipGroup';
 
 /**
  * TaskList Component - Displays the list of task groups on the left side of the Gantt chart
@@ -14,10 +15,13 @@ const TaskList: React.FC<TaskListProps> = ({
   rowHeight = 40,
   className = '',
   onGroupClick,
-  onGroupMouseEnter,
-  onGroupMouseLeave,
+  showTooltipGroup,
+  renderTooltipGroup,
   viewMode,
 }) => {
+  const [hoveredGroup, setHoveredGroup] = useState<TaskGroup | null>(null);
+  const [tooltipPosition, setTooltipPosition] = useState({ x: 0, y: 0 });
+
   // Validate task groups array
   const validTasks = Array.isArray(tasks) ? tasks : [];
 
@@ -38,18 +42,19 @@ const TaskList: React.FC<TaskListProps> = ({
     }
   };
 
-  // Handle group mouse enter
-  const handleGroupMouseEnter = (event: React.MouseEvent, group: TaskGroup) => {
-    if (onGroupMouseEnter) {
-      onGroupMouseEnter(event, group);
-    }
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    setTooltipPosition({
+      x: e.clientX + 20,
+      y: e.clientY,
+    });
   };
 
-  // Handle group mouse leave
+  const handleGroupMouseEnter = (group: TaskGroup) => {
+    setHoveredGroup(group);
+  };
+
   const handleGroupMouseLeave = () => {
-    if (onGroupMouseLeave) {
-      onGroupMouseLeave();
-    }
+    setHoveredGroup(null);
   };
 
   return (
@@ -72,8 +77,9 @@ const TaskList: React.FC<TaskListProps> = ({
             className='rmg-task-group'
             style={{ height: `${groupHeight}px` }}
             onClick={() => handleGroupClick(taskGroup)}
-            onMouseEnter={e => handleGroupMouseEnter(e, taskGroup)}
+            onMouseEnter={() => handleGroupMouseEnter(taskGroup)}
             onMouseLeave={handleGroupMouseLeave}
+            onMouseMove={handleMouseMove}
             data-testid={`task-group-${taskGroup.id || 'unknown'}`}
             data-rmg-component='task-group'
             data-group-id={taskGroup.id}
@@ -120,6 +126,14 @@ const TaskList: React.FC<TaskListProps> = ({
           </div>
         );
       })}
+      {showTooltipGroup && hoveredGroup && (
+        <TooltipGroup
+          group={hoveredGroup}
+          position={{ x: tooltipPosition.x, y: tooltipPosition.y }}
+          renderTooltip={renderTooltipGroup}
+          rowHeight={getGroupHeight(hoveredGroup)}
+        />
+      )}
     </div>
   );
 };

@@ -34,10 +34,19 @@ const Tooltip: React.FC<
   try {
     // If the task is being dragged/resized, get the live dates from element position
     const id = taskId || task.id;
-    const taskEl = document.querySelector(`[data-task-id="${id}"][data-instance-id="${instanceId}"]`) as HTMLElement;
+    const taskEl = document.querySelector(
+      `[data-task-id="${id}"][data-instance-id="${instanceId}"]`,
+    ) as HTMLElement;
 
     if (taskEl && (dragType || taskEl.style.left || taskEl.style.width)) {
-      const dates = TaskService.getLiveDatesFromElement(taskEl, startDate, endDate, totalMonths, monthWidth, viewMode);
+      const dates = TaskService.getLiveDatesFromElement(
+        taskEl,
+        startDate,
+        endDate,
+        totalMonths,
+        monthWidth,
+        viewMode,
+      );
       displayStartDate = dates.startDate;
       displayEndDate = dates.endDate;
     }
@@ -93,7 +102,8 @@ const Tooltip: React.FC<
           left: `${position.x}px`,
           top: `${position.y - 40}px`,
         }}
-        data-rmg-component="tooltip">
+        data-rmg-component='tooltip'
+      >
         {renderTooltip({
           task,
           position,
@@ -114,51 +124,56 @@ const Tooltip: React.FC<
         left: `${position.x}px`,
         top: `${position.y - 40}px`,
       }}
-      data-rmg-component="tooltip">
+      data-rmg-component='tooltip'
+    >
       {/* Task name */}
-      <div className="rmg-tooltip-title" data-rmg-component="tooltip-title">
+      <div className='rmg-tooltip-title' data-rmg-component='tooltip-title'>
         {task.name || 'Unnamed Task'}
       </div>
 
       {/* Action indicator */}
       {actionText && (
-        <div className="rmg-tooltip-action" data-rmg-component="tooltip-action">
+        <div className='rmg-tooltip-action' data-rmg-component='tooltip-action'>
           {actionText}
         </div>
       )}
 
       {/* Task details */}
-      <div className="rmg-tooltip-content" data-rmg-component="tooltip-content">
-        <div className="rmg-tooltip-row" data-rmg-component="tooltip-row">
-          <div className="rmg-tooltip-label">Start:</div>
-          <div className="rmg-tooltip-value">{formatDate(displayStartDate)}</div>
+      <div className='rmg-tooltip-content' data-rmg-component='tooltip-content'>
+        <div className='rmg-tooltip-row' data-rmg-component='tooltip-row'>
+          <div className='rmg-tooltip-label'>Start:</div>
+          <div className='rmg-tooltip-value'>
+            {formatDate(displayStartDate)}
+          </div>
         </div>
 
-        <div className="rmg-tooltip-row" data-rmg-component="tooltip-row">
-          <div className="rmg-tooltip-label">End:</div>
-          <div className="rmg-tooltip-value">{formatDate(displayEndDate)}</div>
+        <div className='rmg-tooltip-row' data-rmg-component='tooltip-row'>
+          <div className='rmg-tooltip-label'>End:</div>
+          <div className='rmg-tooltip-value'>{formatDate(displayEndDate)}</div>
         </div>
 
-        <div className="rmg-tooltip-row" data-rmg-component="tooltip-row">
-          <div className="rmg-tooltip-label">Duration:</div>
-          <div className="rmg-tooltip-value">
+        <div className='rmg-tooltip-row' data-rmg-component='tooltip-row'>
+          <div className='rmg-tooltip-label'>Duration:</div>
+          <div className='rmg-tooltip-value'>
             {duration.value} {duration.unit}
           </div>
         </div>
 
         {/* Show progress if enabled */}
         {showProgress && typeof task.percent === 'number' && (
-          <div className="rmg-tooltip-row" data-rmg-component="tooltip-row">
-            <div className="rmg-tooltip-label">Progress:</div>
-            <div className="rmg-tooltip-value">{task.percent}%</div>
+          <div className='rmg-tooltip-row' data-rmg-component='tooltip-row'>
+            <div className='rmg-tooltip-label'>Progress:</div>
+            <div className='rmg-tooltip-value'>{task.percent}%</div>
           </div>
         )}
 
         {/* Show dependencies if available */}
         {task.dependencies && task.dependencies.length > 0 && (
-          <div className="rmg-tooltip-row" data-rmg-component="tooltip-row">
-            <div className="rmg-tooltip-label">Dependencies:</div>
-            <div className="rmg-tooltip-value">{task.dependencies.join(', ')}</div>
+          <div className='rmg-tooltip-row' data-rmg-component='tooltip-row'>
+            <div className='rmg-tooltip-label'>Dependencies:</div>
+            <div className='rmg-tooltip-value'>
+              {task.dependencies.join(', ')}
+            </div>
           </div>
         )}
       </div>
