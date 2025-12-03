@@ -16,8 +16,6 @@ const TooltipGroup: React.FC<
     zIndex: 1000,
   };
 
-  console.log('Rendering TooltipGroup for group:', group);
-
   if (renderTooltip) {
     return (
       <div
