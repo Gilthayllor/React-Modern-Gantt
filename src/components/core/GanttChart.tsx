@@ -782,4 +782,6 @@ const GanttChart = React.forwardRef(
   },
 );
 
+GanttChart.displayName = 'GanttChart';
+
 export default GanttChart;
