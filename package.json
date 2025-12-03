@@ -30,11 +30,11 @@
     "planning",
     "roadmap"
   ],
-  "author": "Mika Stiebitz",
+  "author": "Gilthayllor Sousa",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/MikaStiebitz/React-Modern-Gantt/"
+    "url": "https://github.com/Gilthayllor/react-modern-gantt"
   },
   "peerDependencies": {
     "react": "^17.0.0 || ^18.0.0 || ^19.0.0",
